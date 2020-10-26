@@ -1,0 +1,82 @@
+---
+title: "Redis for dummies"
+output: html_notebook
+---
+
+Along this notebook we will explore the usage of redis. For that, a redis instance need to be running.
+
+```{r}
+system("docker run --name some-redis -p 6379:6379 -d redis")
+```
+Nice! Now we will need an R library to communicate with it.
+
+```{r}
+library(rredis)
+```
+
+And then do the connection.
+
+```{r}
+redisConnect(host = 'localhost')
+```
+
+Done, easy-peasy! Now we can check if a given key exists, for example.
+
+```{r}
+redisExists('foo')
+```
+
+Set it if not.
+
+```{r}
+redisSet('foo', 10)
+```
+```{r}
+redisExists('foo')
+```
+And retrieve stored object.
+
+```{r}
+redisGet('foo')
+```
+
+Set it again.
+
+```{r}
+redisSet('foo', runif(10))
+```
+```{r}
+redisGet('foo')
+```
+And finally, erase it when it is no longer used.
+
+```{r}
+redisDelete('foo')
+```
+
+That doesn't mean we can not set it again. Even using a set of keys to assign values.
+
+```{r}
+redisMSet(list(x=pi,y='Cazart',z=runif(2)))
+# Retrieve a set of keys
+redisMGet(list('z','y'))
+```
+
+```{r}
+redisGet('x')
+```
+Even scan the whole thing.
+
+```{r}
+l <- redisKeys()
+redisMGet(l)
+```
+Or erase the whole database.
+
+```{r}
+redisFlushAll()
+redisClose()
+system("docker stop some-redis")
+system("docker rm some-redis")
+```
+
