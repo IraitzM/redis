@@ -1,6 +1,9 @@
 # This is a simple R script to test rredis library
 library(rredis)
 
+# We will need a redis instance running
+system("docker run --name some-redis -p 6379:6379 -d redis")
+
 # Running on local
 redisConnect(host = 'localhost')
 
